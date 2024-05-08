@@ -17,10 +17,6 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/userInfo', [AuthController::class, 'userInfo']);
 
-Route::middleware('jwt.verify')->group(function () {
-    Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciarCarrito']);
-});
-
 Route::post('/comprar', [CompraController::class, 'realizarCompra']);
 
 Route::get('/compras', [CompraController::class, 'verComprasAnteriores']);
@@ -28,4 +24,11 @@ Route::get('/compras', [CompraController::class, 'verComprasAnteriores']);
 Route::post('/carrito/agregar', [CarritoController::class, 'agregarAlCarrito']);
 
 Route::delete('/carrito/eliminar/{id}', [CarritoController::class, 'eliminarDelCarrito']);
+
+Route::middleware('jwt.verify')->group(function () {
+    Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciarCarrito']);
+});
+
+
+
 

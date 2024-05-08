@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
 import { Col, Card, CardBody, CardFooter, CardImg, Badge, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -56,31 +56,30 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
         }
     };
 
-    // Función addCar para agregar un Pokémon al carrito
+    
     const addCar = async () => {
-        // Si estamos en el carrito, eliminar el Pokémon
+        
         if (isCart) {
             try {
-                // Obtener el token JWT del almacenamiento local
                 const token = localStorage.getItem('jwtToken');
                 
-                // Realizar la solicitud DELETE al backend, usando el nombre del Pokémon
+                
                 const response = await axios.delete(`http://localhost:8000/api/carrito/eliminar/${pokemon.name}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`, // Incluir el token JWT en la cabecera
+                        'Authorization': `Bearer ${token}`, 
                     },
                 });
                 
-                // Verificar la respuesta
+                
                 if (response.status === 200) {
-                    // Eliminar el Pokémon del array del carrito en el frontend
-                    onRemove(pokemon.name); // Llama a la función onRemove con el nombre del Pokémon
                     
-                    // Mostrar mensaje de éxito
+                    onRemove(pokemon.name);
+                    
+                    
                     enqueueSnackbar('¡Pokémon eliminado del carrito!', { variant: 'success' });
                 } else {
-                    // Manejar el mensaje del backend
+                    
                     if (response.data && response.data.message === 'Pokémon no encontrado en el carrito') {
                         enqueueSnackbar('Pokémon no encontrado en el carrito', { variant: 'error' });
                     } else {
@@ -88,12 +87,12 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
                     }
                 }
             } catch (error) {
-                // Manejar errores durante la solicitud HTTP
+                
                 console.error('Error al eliminar el Pokémon del carrito:', error);
                 enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
             }
         } else {
-            // Si no estamos en el carrito, agregar el Pokémon
+            
             const pokemonConUrl = {
                 name: pokemon.name,
                 url: poke.url,
@@ -102,14 +101,12 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
                 id: pokemon.id,
             };
             
-            // Agregar el objeto al carrito
             agregarAlCarrito(pokemonConUrl);
             
-            // Realizar la solicitud POST al backend
             try {
                 const token = localStorage.getItem('jwtToken');
                 
-                // Realizar la solicitud POST al backend
+                
                 const response = await axios.post('http://localhost:8000/api/carrito/agregar', {
                     pokemon_name: pokemonConUrl.name,
                     sprite: pokemonConUrl.sprite,
@@ -121,9 +118,7 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
                     },
                 });
                 
-                // Verificar la respuesta
                 if (response.status === 201) {
-                    // Mostrar mensaje de éxito
                     enqueueSnackbar('¡Pokémon agregado al carrito!', { variant: 'success' });
                 } else {
                     enqueueSnackbar('Error al agregar el Pokémon al carrito', { variant: 'error' });
@@ -135,11 +130,6 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
         }
     };
     
-    
-    
-    
-    
-
 
     const primaryType = pokemon.types && pokemon.types[0]?.type.name;
     const cardBgColor = typeColors[primaryType] || '#FFFFFF';

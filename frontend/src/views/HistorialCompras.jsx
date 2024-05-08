@@ -11,28 +11,24 @@ function HistorialCompras() {
         fetchCompras();
     }, []);
 
-    // Función para formatear la fecha
+    
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return date.toLocaleDateString('es-ES', options);
     };
 
-    // Función para obtener el historial de compras desde el backend
+    
     const fetchCompras = async () => {
         try {
-            // Obtener el token JWT del almacenamiento local
             const token = localStorage.getItem('jwtToken');
-
-            // Realizar la solicitud GET al backend
             const response = await axios.get('http://localhost:8000/api/compras', {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Incluir el token JWT en la cabecera
+                    'Authorization': `Bearer ${token}`, 
                 },
             });
 
-            // Verificar la respuesta y establecer las compras en el estado
             if (response.status === 200) {
                 setCompras(response.data.compras);
             } else {

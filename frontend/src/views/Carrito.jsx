@@ -1,16 +1,16 @@
+import axios from 'axios';
 import React, { useContext } from 'react';
 import PokeCard from '../components/PokeCard';
 import { Container, Row, Col, Button } from 'reactstrap';
 import { CarritoContext } from '../provider/CarritoContext';
 import { useSnackbar } from 'notistack';
-import axios from 'axios';
 
 function Carrito() {
     const { carrito, eliminarDelCarrito, vaciarCarrito, userId, updateUserId } = useContext(CarritoContext);
     const { enqueueSnackbar } = useSnackbar();
     
 
-    // Cálculo del precio total de los productos en el carrito
+    
     const totalPrecio = carrito.reduce((total, pokemon) => total + pokemon.price, 0);
 
     const comprarProductos = async () => {
@@ -19,12 +19,12 @@ function Carrito() {
             return;
         }
 
-        // Filtra los datos relevantes de los objetos en el carrito
+        
         const datosCompra = carrito.map((pokemon) => ({
             pokemon_name: pokemon.name,
             sprite: pokemon.sprite,
             price: pokemon.price,
-            user_id: userId, // Add user_id to the request payload
+            user_id: userId,
           }));
 
         try {

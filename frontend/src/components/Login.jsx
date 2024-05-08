@@ -15,17 +15,15 @@ function LoginForm({ onLoginSuccess }) {
             console.log('User logged in:', response.data);
             
             if (response.data && response.data.token) {
-                // Guarda el token en el local storage
+
                 localStorage.setItem('jwtToken', response.data.token);
-                
-                // Llama a la función de éxito de inicio de sesión
+            
                 onLoginSuccess();
                 
-                // Redirige a la página de inicio y recarga la página
                 navigate('/home');
                 window.location.reload();
 
-                // Mostrar una notificación de éxito
+                
                 enqueueSnackbar('Inicio de sesión exitoso', { variant: 'success' });
             } else {
                 console.error('Unexpected response format:', response.data);
