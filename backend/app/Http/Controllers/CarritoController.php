@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class CarritoController extends Controller
 {
 
+
     public function agregarAlCarrito(Request $request)
     {
         $request->validate([

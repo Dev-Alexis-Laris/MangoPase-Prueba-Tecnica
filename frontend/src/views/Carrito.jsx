@@ -1,16 +1,14 @@
-import axios from 'axios';
 import React, { useContext } from 'react';
+import axios from 'axios';
 import PokeCard from '../components/PokeCard';
 import { Container, Row, Col, Button } from 'reactstrap';
 import { CarritoContext } from '../provider/CarritoContext';
 import { useSnackbar } from 'notistack';
 
 function Carrito() {
-    const { carrito, eliminarDelCarrito, vaciarCarrito, userId, updateUserId } = useContext(CarritoContext);
+    const { carrito, eliminarDelCarrito, vaciarCarrito } = useContext(CarritoContext);
     const { enqueueSnackbar } = useSnackbar();
-    
 
-    
     const totalPrecio = carrito.reduce((total, pokemon) => total + pokemon.price, 0);
 
     const comprarProductos = async () => {
@@ -19,16 +17,14 @@ function Carrito() {
             return;
         }
 
-        
-        const datosCompra = carrito.map((pokemon) => ({
-            pokemon_name: pokemon.name,
-            sprite: pokemon.sprite,
-            price: pokemon.price,
-            user_id: userId,
-          }));
-
         try {
             const token = localStorage.getItem('jwtToken');
+            const datosCompra = carrito.map((pokemon) => ({
+                pokemon_name: pokemon.name,
+                sprite: pokemon.sprite,
+                price: pokemon.price,
+            }));
+
             const response = await axios.post('http://localhost:8000/api/comprar', datosCompra, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,8 +36,7 @@ function Carrito() {
                 vaciarCarrito();
                 enqueueSnackbar('¡Felicidades! Compra Exitosa', { variant: 'info' });
             } else {
-                const errorData = response.data;
-                enqueueSnackbar(`Error al realizar la compra: ${errorData.error}`, { variant: 'error' });
+                enqueueSnackbar(`Error al realizar la compra`, { variant: 'error' });
             }
         } catch (error) {
             enqueueSnackbar(`Error al realizar la compra: ${error.message}`, { variant: 'error' });
@@ -59,7 +54,7 @@ function Carrito() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    borderRadius: '5px'
+                    borderRadius: '5px',
                 }}>
                     <span style={{ color: '#fff' }}>Total Pokemones:</span>
                     <strong style={{ color: '#90EE90', margin: '10px' }}> ${totalPrecio}</strong>
@@ -71,7 +66,7 @@ function Carrito() {
 
             <Row className="mt-3">
                 {carrito.map((pokemon, index) => (
-                    <Col key={index} sm="6" md="4" lg="11" className="mb-3">
+                    <Col key={index} sm="6" md="4" lg="12" className="mb-3">
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <PokeCard
                                 poke={pokemon}

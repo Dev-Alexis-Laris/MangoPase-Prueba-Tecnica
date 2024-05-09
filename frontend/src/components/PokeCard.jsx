@@ -38,75 +38,66 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
     }, [poke.url]);
 
     const getPokemon = async () => {
-        if (!poke.url) {
-            console.error('URL de poke está vacía o indefinida');
-            enqueueSnackbar('URL de poke está vacía o indefinida', { variant: 'error' });
-            return;
-        }
+        const apiUrl = `https://pokeapi.co/api/v2/pokemon/${poke.name}`;
 
         try {
-            const response = await axios.get(poke.url);
+            const response = await axios.get(apiUrl);
             const data = response.data;
+
             setPokemon(data);
-            const imageUrl = data.sprites.other.dream_world.front_default || data.sprites.other['official-artwork'].front_default;
+
+            const imageUrl = data.sprites.other.dream_world.front_default || data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
             setImage(imageUrl);
+
         } catch (error) {
             console.error('Error al cargar los datos del Pokémon:', error);
             enqueueSnackbar('Error al cargar los datos del Pokémon', { variant: 'error' });
         }
     };
 
-    
+
     const addCar = async () => {
-        
+        const token = localStorage.getItem('jwtToken');
+
         if (isCart) {
             try {
-                const token = localStorage.getItem('jwtToken');
-                
-                
                 const response = await axios.delete(`http://localhost:8000/api/carrito/eliminar/${pokemon.name}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`, 
+                        'Authorization': `Bearer ${token}`,
                     },
                 });
-                
-                
+
                 if (response.status === 200) {
-                    
+
                     onRemove(pokemon.name);
-                    
-                    
+
                     enqueueSnackbar('¡Pokémon eliminado del carrito!', { variant: 'success' });
                 } else {
-                    
-                    if (response.data && response.data.message === 'Pokémon no encontrado en el carrito') {
-                        enqueueSnackbar('Pokémon no encontrado en el carrito', { variant: 'error' });
-                    } else {
-                        enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
-                    }
+                    enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
                 }
             } catch (error) {
-                
                 console.error('Error al eliminar el Pokémon del carrito:', error);
                 enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
             }
         } else {
-            
-            const pokemonConUrl = {
-                name: pokemon.name,
-                url: poke.url,
-                sprite: image,
-                price: 50,
-                id: pokemon.id,
-            };
-            
-            agregarAlCarrito(pokemonConUrl);
-            
+
             try {
-                const token = localStorage.getItem('jwtToken');
-                
-                
+
+                const pokemonResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`);
+                const pokemonData = pokemonResponse.data;
+
+                const pokemonConUrl = {
+                    name: pokemonData.name,
+                    sprite: pokemonData.sprites.other.dream_world.front_default || pokemonData.sprites.other['official-artwork'].front_default,
+                    price: 50,
+                    id: pokemonData.id,
+                };
+
+
+                agregarAlCarrito(pokemonConUrl);
+
+
                 const response = await axios.post('http://localhost:8000/api/carrito/agregar', {
                     pokemon_name: pokemonConUrl.name,
                     sprite: pokemonConUrl.sprite,
@@ -117,7 +108,7 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                
+
                 if (response.status === 201) {
                     enqueueSnackbar('¡Pokémon agregado al carrito!', { variant: 'success' });
                 } else {
@@ -129,7 +120,6 @@ const PokeCard = ({ poke, isCart, onRemove }) => {
             }
         }
     };
-    
 
     const primaryType = pokemon.types && pokemon.types[0]?.type.name;
     const cardBgColor = typeColors[primaryType] || '#FFFFFF';

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, CardBody, CardImg, Badge, CardFooter, Button } from 'reactstrap';
 import { useSnackbar } from 'notistack';
 import { CarritoContext } from '../provider/CarritoContext';
+
 const typeColors = {
     normal: '#A8A878',
     fire: '#F08030',
@@ -36,12 +37,12 @@ function PokemonDetail({ poke }) {
     const fixedPrice = "$50";
     const [isCart, setIsCart] = React.useState(false);
 
-    // Inicializar isCart con base en el estado del carrito
+    
     React.useEffect(() => {
         setIsCart(carrito.some(poke => poke.name === pokemonName));
     }, [carrito, pokemonName]);
 
-    // Función para obtener detalles del Pokémon
+    
     const fetchPokemonDetails = async () => {
         const apiUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
         try {
@@ -62,7 +63,7 @@ function PokemonDetail({ poke }) {
 
     const addCar = async () => {
         if (isCart) {
-            // Si está en el carrito, eliminar el Pokémon
+            
             try {
                 const token = localStorage.getItem('jwtToken');
                 const response = await axios.delete(`http://localhost:8000/api/carrito/eliminar/${pokemon.name}`, {
@@ -73,8 +74,8 @@ function PokemonDetail({ poke }) {
                 });
 
                 if (response.status === 200) {
-                    eliminarDelCarrito(pokemon); // Eliminar del carrito en el contexto
-                    setIsCart(false); // Actualizar isCart para reflejar que el Pokémon ya no está en el carrito
+                    eliminarDelCarrito(pokemon);
+                    setIsCart(false);
                     enqueueSnackbar('¡Pokémon eliminado del carrito!', { variant: 'success' });
                 } else {
                     enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
@@ -84,7 +85,7 @@ function PokemonDetail({ poke }) {
                 enqueueSnackbar('Error al eliminar el Pokémon del carrito', { variant: 'error' });
             }
         } else {
-            // Si no está en el carrito, agregar el Pokémon
+            
             const pokemonConUrl = {
                 name: pokemon.name,
                 url: `https://pokeapi.co/api/v2/pokemon/${pokemonName}`,
@@ -93,7 +94,7 @@ function PokemonDetail({ poke }) {
                 id: pokemon.id,
             };
 
-            agregarAlCarrito(pokemonConUrl); // Agregar al carrito
+            agregarAlCarrito(pokemonConUrl);
 
             try {
                 const token = localStorage.getItem('jwtToken');
@@ -109,7 +110,7 @@ function PokemonDetail({ poke }) {
                 });
 
                 if (response.status === 201) {
-                    setIsCart(true); // Actualizar isCart para reflejar que el Pokémon se agregó al carrito
+                    setIsCart(true);
                     enqueueSnackbar('¡Pokémon agregado al carrito!', { variant: 'success' });
                 } else {
                     enqueueSnackbar('Error al agregar el Pokémon al carrito', { variant: 'error' });
